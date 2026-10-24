@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spoken Nursing Care Plan: Concise Phrase Register Matrix</title>
+  <title>Spoken Nursing Care Plan: Micro-Phrase Matrix</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Canvas Confetti CDN -->
@@ -22,7 +22,7 @@
       animation: bamShake 0.45s ease-in-out;
     }
     .gradient-bg {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #032b45 100%);
+      background: linear-gradient(135deg, #09121d 0%, #111e2e 50%, #082032 100%);
     }
   </style>
 </head>
@@ -32,10 +32,10 @@
   <header class="bg-slate-900/90 backdrop-blur border-b border-slate-700/60 sticky top-0 z-40 px-4 py-3 shadow-lg">
     <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
       <div>
-        <h1 class="text-xl md:text-2xl font-extrabold text-emerald-400 tracking-wide">
-          🏥 Concise Clinical Phrases: Informal ➔ Formal
+        <h1 class="text-xl md:text-2xl font-extrabold text-amber-400 tracking-wide">
+          🏥 Micro-Phrase Matrix: Informal ➔ Formal
         </h1>
-        <p class="text-xs text-slate-400">Curriculum & Author: <span class="text-amber-300 font-semibold">Giyono Asfarrasyid</span></p>
+        <p class="text-xs text-slate-400">Curriculum Author: <span class="text-teal-300 font-semibold">Giyono Asfarrasyid</span></p>
       </div>
 
       <!-- SCOREBOARD & STATS -->
@@ -51,8 +51,8 @@
         </div>
         <div class="h-8 w-px bg-slate-700"></div>
         <div class="text-center">
-          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Phrase</span>
-          <span id="caseProgressDisplay" class="text-sm font-bold text-sky-300">1 / 10</span>
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Scenario</span>
+          <span id="caseProgressDisplay" class="text-sm font-bold text-sky-300">1 / 20</span>
         </div>
       </div>
     </div>
@@ -61,18 +61,16 @@
   <!-- MAIN CONTAINER -->
   <main id="mainContainer" class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
 
-    <!-- GAME CONTROLS & MODULE FILTER -->
+    <!-- GAME CONTROLS & MODULE SELECTION -->
     <section class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/80 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-2">
         <label for="moduleSelect" class="text-sm font-semibold text-slate-300">Module Filter:</label>
-        <select id="moduleSelect" class="bg-slate-900 border border-slate-600 text-emerald-300 text-sm rounded-lg p-2 focus:ring-2 focus:ring-emerald-400 outline-none">
-          <option value="all">All Modules (Concise Phrase Challenge)</option>
-          <option value="1">Module 1: Intake & Pain Phrases</option>
-          <option value="2">Module 2: Vital Signs & Fever Phrases</option>
-          <option value="3">Module 3: Respiratory & Lung Phrases</option>
-          <option value="4">Module 4: Wound & Bleeding Phrases</option>
-          <option value="5">Module 5: Administration & Safety Phrases</option>
-          <option value="6">Module 6: Discharge & Home Care Phrases</option>
+        <select id="moduleSelect" class="bg-slate-900 border border-slate-600 text-amber-300 text-sm rounded-lg p-2 focus:ring-2 focus:ring-amber-400 outline-none">
+          <option value="all">All 20 Modules (Comprehensive Micro-Phrase Challenge)</option>
+          <option value="1">Modules 1-5: Assessment, Vitals, ISBAR, Meds</option>
+          <option value="6">Modules 6-10: Treatments, Handover, HR, Peds, ICU</option>
+          <option value="11">Modules 11-15: Isolation, Discharge, Surgery, Psych, Onco</option>
+          <option value="16">Modules 16-20: ER, Community, Home, Geri, Palliative</option>
         </select>
       </div>
 
@@ -80,7 +78,7 @@
         <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg transition font-medium">
           🔄 Reset Matrix
         </button>
-        <button id="soundToggle" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg transition font-medium">
+        <button id="soundToggle" class="bg-amber-700 hover:bg-amber-600 text-white text-xs px-3 py-2 rounded-lg transition font-medium">
           🔊 Sound: ON
         </button>
       </div>
@@ -89,31 +87,31 @@
     <!-- PROMPT & SCENARIO CARD -->
     <section class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700 shadow-xl relative overflow-hidden">
       <div class="flex items-center justify-between mb-3">
-        <span id="badgeCategory" class="bg-emerald-900/80 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase border border-emerald-500/40">
-          Concise Clinical Phase
+        <span id="badgeCategory" class="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full uppercase border border-amber-500/40">
+          Module Phase
         </span>
-        <span id="badgeTargetType" class="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/40">
-          Match ALL 2–4 Word Formal Phrases
+        <span id="badgeTargetType" class="bg-teal-900/80 text-teal-300 text-xs font-bold px-3 py-1 rounded-full border border-teal-500/40">
+          Select 2-to-4 Word Formal Terms
         </span>
       </div>
 
-      <!-- VISUAL SETTING DESCRIPTION -->
-      <div id="visualDescription" class="italic text-xs text-slate-400 mb-4 bg-slate-900/60 p-3 rounded-lg border-l-4 border-emerald-500">
-        "Visual description of bedside setting..."
+      <!-- VISUAL DESCRIPTION -->
+      <div id="visualDescription" class="italic text-xs text-slate-400 mb-4 bg-slate-900/60 p-3 rounded-lg border-l-4 border-amber-500">
+        "Visual description of clinical setting..."
       </div>
 
-      <!-- INFORMAL SHORT PHRASE PROMPT -->
+      <!-- INFORMAL MICRO-PHRASE PROMPT -->
       <div class="mb-4">
-        <h2 class="text-xs uppercase font-extrabold text-slate-400 tracking-wider mb-1">Informal Bedside Phrase (2–4 Words):</h2>
-        <div id="informalPrompt" class="text-lg md:text-xl font-black text-white bg-slate-950/80 p-4 rounded-xl border border-slate-700/80 text-emerald-300 tracking-wide">
-          "Informal phrase here..."
+        <h2 class="text-xs uppercase font-extrabold text-slate-400 tracking-wider mb-1">Informal Bedside Phrase (2-4 Words):</h2>
+        <div id="informalPrompt" class="text-xl md:text-2xl font-black text-amber-300 bg-slate-950/80 p-4 rounded-xl border border-slate-700/80 text-center tracking-wide">
+          "Informal Phrase"
         </div>
       </div>
 
-      <!-- INSTRUCTION -->
-      <div class="bg-amber-950/40 border border-amber-700/50 p-3 rounded-xl mb-4">
-        <p id="challengeInstruction" class="text-sm font-semibold text-amber-200">
-          ⚠️ Select ALL valid formal medical phrases (2 to 4 words) that mean the exact same thing:
+      <!-- CHALLENGE QUESTION INSTRUCTION -->
+      <div class="bg-teal-950/40 border border-teal-700/50 p-3 rounded-xl mb-4">
+        <p id="challengeInstruction" class="text-sm font-semibold text-teal-200">
+          ⚠️ Select ALL formal medical terms (2-4 words) that match this exact meaning:
         </p>
       </div>
 
@@ -122,10 +120,10 @@
         <!-- Options injected dynamically -->
       </div>
 
-      <!-- SUBMIT BUTTON -->
+      <!-- SUBMIT ACTION BUTTON -->
       <div class="mt-6 flex justify-end">
-        <button id="submitBtn" class="w-full md:w-auto bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-lg px-8 py-3.5 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50">
-          CHECK CONCISE MATCHES (+100 / -100) 🎯
+        <button id="submitBtn" class="w-full md:w-auto bg-gradient-to-r from-amber-500 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 text-slate-950 font-black text-lg px-8 py-3.5 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50">
+          SUBMIT FORMAL EVALUATION (+100 / -100) 🎯
         </button>
       </div>
     </section>
@@ -135,7 +133,7 @@
       <div id="feedbackText"></div>
       <div id="feedbackSubtext" class="text-xs font-normal mt-1"></div>
       <button id="nextCaseBtn" class="mt-3 bg-slate-900 text-white text-sm px-5 py-2 rounded-lg border border-slate-600 hover:bg-slate-800 transition">
-        Next Phrase ➔
+        Next Micro-Phrase ➔
       </button>
     </div>
 
@@ -143,7 +141,7 @@
 
   <!-- FOOTER -->
   <footer class="bg-slate-950 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
-    <p>Spoken English for Nursing Care Plan • Short Phrase Register Matrix</p>
+    <p>Spoken English for Nursing Care Plan Training System • Micro-Phrase Register Matrix</p>
     <p class="mt-1">Content & Pedagogical Framework © Giyono Asfarrasyid</p>
   </footer>
 
@@ -165,6 +163,8 @@
         if (!this.enabled) return;
         this.init();
         const now = this.ctx.currentTime;
+        
+        // Exciting ascending fanfare chord
         [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
@@ -182,13 +182,17 @@
         if (!this.enabled) return;
         this.init();
         const now = this.ctx.currentTime;
+        
+        // Low-frequency buzz drop
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(160, now);
         osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+        
         gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
@@ -198,82 +202,82 @@
 
     const soundFX = new SoundEffects();
 
-    // --- CONCISE PHRASE DATABASE (2-4 WORDS MAX) ---
-    const shortPhraseScenarios = [
+    // --- PROPORTIONAL 20-MODULE MICRO-PHRASE DATABASE (2 to 4 words max) ---
+    const microPhraseScenarios = [
       {
         id: 301,
-        module: "1",
-        moduleTitle: "Module 1: Intake & Chest Symptoms",
-        visual: "Bedside pain intake evaluation in emergency triage.",
-        informalPrompt: "Heavy chest pressure spreading",
-        instruction: "Select ALL 2–4 word formal clinical terms that mean 'Heavy chest pressure spreading':",
+        moduleGroup: "1",
+        moduleTitle: "Module 1: Patient Assessment",
+        visual: "Nurse asking patient about pain location at the bedside.",
+        informalPrompt: "bad belly pain",
+        instruction: "Select ALL 2-4 word formal terms for 'bad belly pain':",
         options: [
-          { text: "Radiating substernal tightness", isCorrect: true },
-          { text: "Radiating retrosternal pressure", isCorrect: true },
-          { text: "Acute localized swelling", isCorrect: false, reason: "Incorrect condition: Swelling distractor." },
-          { text: "Mild superficial irritation", isCorrect: false, reason: "Incorrect condition: Skin irritation distractor." }
+          { text: "severe abdominal pain", isCorrect: true },
+          { text: "acute belly discomfort", isCorrect: true },
+          { text: "bilateral chest congestion", isCorrect: false, reason: "Wrong site: Lungs" },
+          { text: "joint edema stiffness", isCorrect: false, reason: "Wrong site: Joints" }
         ]
       },
       {
         id: 302,
-        module: "2",
-        moduleTitle: "Module 2: Vital Signs & Fever",
-        visual: "Checking vital signs monitor at bedside.",
-        informalPrompt: "Running a high fever",
-        instruction: "Select ALL 2–4 word formal medical terms that mean 'Running a high fever':",
+        moduleGroup: "1",
+        moduleTitle: "Module 2: Vital Signs",
+        visual: "Electronic vital signs monitor displaying BP 80/50.",
+        informalPrompt: "blood pressure dropped low",
+        instruction: "Select ALL 2-4 word formal terms for 'blood pressure dropped low':",
         options: [
-          { text: "Acute febrile episode", isCorrect: true },
-          { text: "Severe pyrexia spike", isCorrect: true },
-          { text: "Systemic arterial hypotension", isCorrect: false, reason: "Incorrect vitals: Low blood pressure distractor." },
-          { text: "Resting sinus bradycardia", isCorrect: false, reason: "Incorrect vitals: Slow heart rate distractor." }
+          { text: "acute hypotensive state", isCorrect: true },
+          { text: "severe blood pressure drop", isCorrect: true },
+          { text: "resting sinus tachycardia", isCorrect: false, reason: "Wrong metric: Heart rate" },
+          { text: "febrile temperature spike", isCorrect: false, reason: "Wrong metric: Fever" }
         ]
       },
       {
         id: 303,
-        module: "3",
-        moduleTitle: "Module 3: Respiratory & Secretions",
-        visual: "Auscultating lung sounds with a stethoscope.",
-        informalPrompt: "Rattling phlegm in lungs",
-        instruction: "Select ALL 2–4 word formal terms that mean 'Rattling phlegm in lungs':",
+        moduleGroup: "1",
+        moduleTitle: "Module 3: Nursing Care Plan",
+        visual: "Nurse documenting lung sound assessment in the chart.",
+        informalPrompt: "can't clear phlegm",
+        instruction: "Select ALL 2-4 word formal terms for 'can't clear phlegm':",
         options: [
-          { text: "Coarse lung rhonchi", isCorrect: true },
-          { text: "Retained bronchial secretions", isCorrect: true },
-          { text: "Purulent surgical exudate", isCorrect: false, reason: "Incorrect domain: Wound pus distractor." },
-          { text: "Impaired skin integrity", isCorrect: false, reason: "Incorrect domain: Wound issue distractor." }
+          { text: "ineffective airway clearance", isCorrect: true },
+          { text: "retained bronchial secretions", isCorrect: true },
+          { text: "impaired wound healing", isCorrect: false, reason: "Wrong system: Skin" },
+          { text: "decreased cardiac output", isCorrect: false, reason: "Wrong system: Heart" }
         ]
       },
       {
         id: 304,
-        module: "4",
-        moduleTitle: "Module 4: Wounds & Bleeding",
-        visual: "Evaluating post-operative surgical bandage.",
-        informalPrompt: "Bandage soaked with blood",
-        instruction: "Select ALL 2–4 word formal terms that mean 'Bandage soaked with blood':",
+        moduleGroup: "1",
+        moduleTitle: "Module 4: ISBAR Escalation",
+        visual: "Nurse making urgent physician phone call.",
+        informalPrompt: "wound bleeding fast",
+        instruction: "Select ALL 2-4 word formal terms for 'wound bleeding fast':",
         options: [
-          { text: "Saturated sanguinous dressing", isCorrect: true },
-          { text: "Active dressing hemorrhage", isCorrect: true },
-          { text: "Clear serous drainage", isCorrect: false, reason: "Clinical contradiction: Clear fluid distractor." },
-          { text: "Epithelialized wound bed", isCorrect: false, reason: "Clinical contradiction: Healed wound distractor." }
+          { text: "active surgical hemorrhage", isCorrect: true },
+          { text: "profuse wound bleeding", isCorrect: true },
+          { text: "mild localized edema", isCorrect: false, reason: "Wrong condition: Swelling" },
+          { text: "purulent wound exudate", isCorrect: false, reason: "Wrong condition: Pus" }
         ]
       },
       {
         id: 305,
-        module: "5",
-        moduleTitle: "Module 5: Administration & Safety",
-        visual: "Checking medication barcode at bedside cart.",
-        informalPrompt: "Pills to lower pressure",
-        instruction: "Select ALL 2–4 word formal terms that mean 'Pills to lower pressure':",
+        moduleGroup: "1",
+        moduleTitle: "Module 5: Medication Safety",
+        visual: "Patient declining morning tablet medication.",
+        informalPrompt: "refuses his pill",
+        instruction: "Select ALL 2-4 word formal terms for 'refuses his pill':",
         options: [
-          { text: "Oral antihypertensive agents", isCorrect: true },
-          { text: "Blood pressure therapeutics", isCorrect: true },
-          { text: "Intravenous antimicrobial prophylaxis", isCorrect: false, reason: "Pharmacological distractor: Antibiotic." },
-          { text: "Sublingual analgesic bolus", isCorrect: false, reason: "Pharmacological distractor: Pain reliever." }
+          { text: "medication refusal documented", isCorrect: true },
+          { text: "patient declined dose", isCorrect: true },
+          { text: "incorrect route error", isCorrect: false, reason: "Wrong issue: Admin error" },
+          { text: "adverse drug reaction", isCorrect: false, reason: "Wrong issue: Side effect" }
         ]
       },
       {
         id: 306,
-        module: "6",
-        moduleTitle: "Module 6: Discharge & Home Care",
-        visual: "Reviewing discharge folder at patient bedside.",
-        informalPrompt: "Trouble swallowing food",
-        instruction: "
+        moduleGroup: "6",
+        moduleTitle: "Module 6: Treatments",
+        visual: "Dressing cart set up for sterile dressing change.",
+        informalPrompt: "clean the wound",
+        instruction:
