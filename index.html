@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spoken Nursing Care Plan: Concise Phrase Register Matrix</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes bamShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-12px, -12px) rotate(-3deg); }
+      30% { transform: translate(12px, 12px) rotate(3deg); }
+      45% { transform: translate(-10px, 10px) rotate(-2deg); }
+      60% { transform: translate(10px, -10px) rotate(2deg); }
+      75% { transform: translate(-5px, 0px) rotate(-1deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    .bam-effect {
+      animation: bamShake 0.45s ease-in-out;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #032b45 100%);
+    }
+  </style>
+</head>
+<body class="gradient-bg text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- TOP HEADER -->
+  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-700/60 sticky top-0 z-40 px-4 py-3 shadow-lg">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <h1 class="text-xl md:text-2xl font-extrabold text-emerald-400 tracking-wide">
+          🏥 Concise Clinical Phrases: Informal ➔ Formal
+        </h1>
+        <p class="text-xs text-slate-400">Curriculum & Author: <span class="text-amber-300 font-semibold">Giyono Asfarrasyid</span></p>
+      </div>
+
+      <!-- SCOREBOARD & STATS -->
+      <div class="flex items-center gap-4 bg-slate-800/90 px-4 py-2 rounded-xl border border-slate-700">
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Score</span>
+          <span id="scoreDisplay" class="text-2xl font-black text-amber-400">0</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Streak</span>
+          <span id="streakDisplay" class="text-2xl font-black text-emerald-400">0🔥</span>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div class="text-center">
+          <span class="text-xs text-slate-400 block uppercase font-bold tracking-wider">Phrase</span>
+          <span id="caseProgressDisplay" class="text-sm font-bold text-sky-300">1 / 10</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main id="mainContainer" class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+
+    <!-- GAME CONTROLS & MODULE FILTER -->
+    <section class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/80 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-2">
+        <label for="moduleSelect" class="text-sm font-semibold text-slate-300">Module Filter:</label>
+        <select id="moduleSelect" class="bg-slate-900 border border-slate-600 text-emerald-300 text-sm rounded-lg p-2 focus:ring-2 focus:ring-emerald-400 outline-none">
+          <option value="all">All Modules (Concise Phrase Challenge)</option>
+          <option value="1">Module 1: Intake & Pain Phrases</option>
+          <option value="2">Module 2: Vital Signs & Fever Phrases</option>
+          <option value="3">Module 3: Respiratory & Lung Phrases</option>
+          <option value="4">Module 4: Wound & Bleeding Phrases</option>
+          <option value="5">Module 5: Administration & Safety Phrases</option>
+          <option value="6">Module 6: Discharge & Home Care Phrases</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <button id="resetBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg transition font-medium">
+          🔄 Reset Matrix
+        </button>
+        <button id="soundToggle" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg transition font-medium">
+          🔊 Sound: ON
+        </button>
+      </div>
+    </section>
+
+    <!-- PROMPT & SCENARIO CARD -->
+    <section class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between mb-3">
+        <span id="badgeCategory" class="bg-emerald-900/80 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase border border-emerald-500/40">
+          Concise Clinical Phase
+        </span>
+        <span id="badgeTargetType" class="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/40">
+          Match ALL 2–4 Word Formal Phrases
+        </span>
+      </div>
+
+      <!-- VISUAL SETTING DESCRIPTION -->
+      <div id="visualDescription" class="italic text-xs text-slate-400 mb-4 bg-slate-900/60 p-3 rounded-lg border-l-4 border-emerald-500">
+        "Visual description of bedside setting..."
+      </div>
+
+      <!-- INFORMAL SHORT PHRASE PROMPT -->
+      <div class="mb-4">
+        <h2 class="text-xs uppercase font-extrabold text-slate-400 tracking-wider mb-1">Informal Bedside Phrase (2–4 Words):</h2>
+        <div id="informalPrompt" class="text-lg md:text-xl font-black text-white bg-slate-950/80 p-4 rounded-xl border border-slate-700/80 text-emerald-300 tracking-wide">
+          "Informal phrase here..."
+        </div>
+      </div>
+
+      <!-- INSTRUCTION -->
+      <div class="bg-amber-950/40 border border-amber-700/50 p-3 rounded-xl mb-4">
+        <p id="challengeInstruction" class="text-sm font-semibold text-amber-200">
+          ⚠️ Select ALL valid formal medical phrases (2 to 4 words) that mean the exact same thing:
+        </p>
+      </div>
+
+      <!-- MULTI-CHOICE OPTIONS MATRIX -->
+      <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 my-4">
+        <!-- Options injected dynamically -->
+      </div>
+
+      <!-- SUBMIT BUTTON -->
+      <div class="mt-6 flex justify-end">
+        <button id="submitBtn" class="w-full md:w-auto bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-lg px-8 py-3.5 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50">
+          CHECK CONCISE MATCHES (+100 / -100) 🎯
+        </button>
+      </div>
+    </section>
+
+    <!-- FEEDBACK OVERLAY / RESULT BOX -->
+    <div id="feedbackBanner" class="hidden p-4 rounded-xl border text-center font-bold text-lg transition duration-300">
+      <div id="feedbackText"></div>
+      <div id="feedbackSubtext" class="text-xs font-normal mt-1"></div>
+      <button id="nextCaseBtn" class="mt-3 bg-slate-900 text-white text-sm px-5 py-2 rounded-lg border border-slate-600 hover:bg-slate-800 transition">
+        Next Phrase ➔
+      </button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+    <p>Spoken English for Nursing Care Plan • Short Phrase Register Matrix</p>
+    <p class="mt-1">Content & Pedagogical Framework © Giyono Asfarrasyid</p>
+  </footer>
+
+  <!-- AUDIO SYNTHESIZER & GAME SCRIPT -->
+  <script>
+    // --- WEB AUDIO API SOUND GENERATOR ---
+    class SoundEffects {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + (idx * 0.08));
+          gain.gain.setValueAtTime(0.15, now + (idx * 0.08));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.08) + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + (idx * 0.08));
+          osc.stop(now + (idx * 0.08) + 0.35);
+        });
+      }
+      playIncorrect() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
+    }
+
+    const soundFX = new SoundEffects();
+
+    // --- CONCISE PHRASE DATABASE (2-4 WORDS MAX) ---
+    const shortPhraseScenarios = [
+      {
+        id: 301,
+        module: "1",
+        moduleTitle: "Module 1: Intake & Chest Symptoms",
+        visual: "Bedside pain intake evaluation in emergency triage.",
+        informalPrompt: "Heavy chest pressure spreading",
+        instruction: "Select ALL 2–4 word formal clinical terms that mean 'Heavy chest pressure spreading':",
+        options: [
+          { text: "Radiating substernal tightness", isCorrect: true },
+          { text: "Radiating retrosternal pressure", isCorrect: true },
+          { text: "Acute localized swelling", isCorrect: false, reason: "Incorrect condition: Swelling distractor." },
+          { text: "Mild superficial irritation", isCorrect: false, reason: "Incorrect condition: Skin irritation distractor." }
+        ]
+      },
+      {
+        id: 302,
+        module: "2",
+        moduleTitle: "Module 2: Vital Signs & Fever",
+        visual: "Checking vital signs monitor at bedside.",
+        informalPrompt: "Running a high fever",
+        instruction: "Select ALL 2–4 word formal medical terms that mean 'Running a high fever':",
+        options: [
+          { text: "Acute febrile episode", isCorrect: true },
+          { text: "Severe pyrexia spike", isCorrect: true },
+          { text: "Systemic arterial hypotension", isCorrect: false, reason: "Incorrect vitals: Low blood pressure distractor." },
+          { text: "Resting sinus bradycardia", isCorrect: false, reason: "Incorrect vitals: Slow heart rate distractor." }
+        ]
+      },
+      {
+        id: 303,
+        module: "3",
+        moduleTitle: "Module 3: Respiratory & Secretions",
+        visual: "Auscultating lung sounds with a stethoscope.",
+        informalPrompt: "Rattling phlegm in lungs",
+        instruction: "Select ALL 2–4 word formal terms that mean 'Rattling phlegm in lungs':",
+        options: [
+          { text: "Coarse lung rhonchi", isCorrect: true },
+          { text: "Retained bronchial secretions", isCorrect: true },
+          { text: "Purulent surgical exudate", isCorrect: false, reason: "Incorrect domain: Wound pus distractor." },
+          { text: "Impaired skin integrity", isCorrect: false, reason: "Incorrect domain: Wound issue distractor." }
+        ]
+      },
+      {
+        id: 304,
+        module: "4",
+        moduleTitle: "Module 4: Wounds & Bleeding",
+        visual: "Evaluating post-operative surgical bandage.",
+        informalPrompt: "Bandage soaked with blood",
+        instruction: "Select ALL 2–4 word formal terms that mean 'Bandage soaked with blood':",
+        options: [
+          { text: "Saturated sanguinous dressing", isCorrect: true },
+          { text: "Active dressing hemorrhage", isCorrect: true },
+          { text: "Clear serous drainage", isCorrect: false, reason: "Clinical contradiction: Clear fluid distractor." },
+          { text: "Epithelialized wound bed", isCorrect: false, reason: "Clinical contradiction: Healed wound distractor." }
+        ]
+      },
+      {
+        id: 305,
+        module: "5",
+        moduleTitle: "Module 5: Administration & Safety",
+        visual: "Checking medication barcode at bedside cart.",
+        informalPrompt: "Pills to lower pressure",
+        instruction: "Select ALL 2–4 word formal terms that mean 'Pills to lower pressure':",
+        options: [
+          { text: "Oral antihypertensive agents", isCorrect: true },
+          { text: "Blood pressure therapeutics", isCorrect: true },
+          { text: "Intravenous antimicrobial prophylaxis", isCorrect: false, reason: "Pharmacological distractor: Antibiotic." },
+          { text: "Sublingual analgesic bolus", isCorrect: false, reason: "Pharmacological distractor: Pain reliever." }
+        ]
+      },
+      {
+        id: 306,
+        module: "6",
+        moduleTitle: "Module 6: Discharge & Home Care",
+        visual: "Reviewing discharge folder at patient bedside.",
+        informalPrompt: "Trouble swallowing food",
+        instruction: "
